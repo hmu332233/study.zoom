@@ -16,4 +16,10 @@ const server = http.createServer(app);
 // web socket server
 const wss = new WebSocket.Server({ server }); // http server 없이 web socket server만 띄워도 된다.
 
+const handleConnection = (socket) => {
+  console.log(socket);
+};
+
+wss.on('connection', handleConnection);
+
 server.listen(3000, handleListen);
