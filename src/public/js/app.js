@@ -8,6 +8,10 @@ socket.addEventListener('open', () => {
 
 socket.addEventListener('message', (message) => {
   console.log('Just got this: ', message.data, 'from the server');
+
+  const $li = document.createElement('li');
+  $li.innerText = message.data;
+  $ul.append($li);
 });
 
 socket.addEventListener('close', () => {
@@ -16,12 +20,25 @@ socket.addEventListener('close', () => {
 
 
 const $ul = document.querySelector('ul');
-const $form = document.querySelector('form');
+const $messageForm = document.querySelector('#message');
+const $nickForm = document.querySelector('#nick');
 
-$form.addEventListener('submit', (event) => {
+$messageForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  const $input = $form.querySelector('input');
+  const $input = $messageForm.querySelector('input');
   console.log($input.value);
-  socket.send($input.value);
+  socket.send(makeMessage('new_message', $input.value));
   $input.value = '';
 });
+
+$nickForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const $input = $nickForm.querySelector('input');
+  socket.send(makeMessage('nickname', $input.value));
+});
+
+
+function makeMessage(type, payload) {
+  const message = { type, payload };
+  return JSON.stringify(message);
+}
