@@ -36,6 +36,19 @@ io.on('connection', (socket) => {
     socket.to(roomName).emit('welcome');
   });
 
+  socket.on('new_message', (message, roomName, callback) => {
+
+    socket.to(roomName).emit('new_message', message);
+    callback();
+  });
+
+  socket.on('disconnecting', () => {
+    // socket.to(roomName).emit('welcome');
+    socket.rooms.forEach(room => {
+      socket.to(room).emit('bye');
+    });
+  });
+
 })
 
 server.listen(3000, handleListen);
