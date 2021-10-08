@@ -16,6 +16,11 @@ const server = http.createServer(app);
 // socket server
 const io = SocketIo(server);
 
+function publicRooms() {
+  const { sids, rooms } = io.sockets.adapter;
+  return [...rooms].filter(([key, value]) => sids.get(key) === undefined).map(([key, value]) => key);
+}
+
 io.on('connection', (socket) => {
   socket.nickname = 'Anon';
 
@@ -35,6 +40,8 @@ io.on('connection', (socket) => {
     callback({ status: 'DONE' });
 
     socket.to(roomName).emit('welcome', socket.nickname);
+
+    io.sockets.emit('room_change', publicRooms());
   });
 
   socket.on('new_message', (message, roomName, callback) => {
@@ -47,6 +54,10 @@ io.on('connection', (socket) => {
     socket.rooms.forEach(room => {
       socket.to(room).emit('bye', socket.nickname);
     });
+  });
+
+  socket.on('disconnect', () => {
+    io.sockets.emit('room_change', publicRooms());
   });
 
   socket.on('nickname', (nickname) => {
