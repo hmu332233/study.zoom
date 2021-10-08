@@ -19,11 +19,11 @@ const io = SocketIo(server);
 io.on('connection', (socket) => {
   
   // ws 구현체와 차이, event 이름이 자유로움, object 형식 전달 가능
-  socket.on('enter_room', (message, callback) => {
+  // https://socket.io/docs/v4/emitting-events/
+  socket.on('enter_room', (message, callback) => { // 마지막 인자는 함수가 될 수 있고 데이터를 전송해주는게 가능
     console.log(message);
-
-    // callback 함수를 호출함으로써 client에 어떤 작업이 끝났음을 알려주는게 가능
-    setTimeout(() => callback(), 3000);
+    // callback 함수를 호출함으로써 client에 작업이 끝났다는 사실 및 데이터를 전송 가능
+    setTimeout(() => callback({ status: 'DONE' }), 3000);
   });
 
 })
