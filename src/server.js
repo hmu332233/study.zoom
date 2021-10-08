@@ -26,12 +26,14 @@ io.on('connection', (socket) => {
   // https://socket.io/docs/v4/emitting-events/
   socket.on('enter_room', (message, callback) => { // 마지막 인자는 함수가 될 수 있고 데이터를 전송해주는게 가능
     console.log(message);
-    const { payload } = message;
+    const { payload: roomName } = message;
 
-    socket.join(payload);
+    socket.join(roomName);
 
     // callback 함수를 호출함으로써 client에 작업이 끝났다는 사실 및 데이터를 전송 가능
-    setTimeout(() => callback({ status: 'DONE' }), 1000);
+    callback({ status: 'DONE' });
+
+    socket.to(roomName).emit('welcome');
   });
 
 })

@@ -8,6 +8,13 @@ const room = document.getElementById('room');
 
 let roomName = '';
 
+function addMessage(message) {
+  const ul = room.querySelector('ul');
+  const li = document.createElement('li');
+  li.innerText = message;
+  ul.append(li);
+}
+
 function handleRoomSubmit(event) {
   event.preventDefault();
   const input = form.querySelector('input');
@@ -27,3 +34,7 @@ function handleRoomSubmit(event) {
 }
 
 form.addEventListener('submit', handleRoomSubmit);
+
+socket.on('welcome', () => {
+  addMessage('Someone joined!');
+});
