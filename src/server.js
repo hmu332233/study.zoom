@@ -17,6 +17,7 @@ const server = http.createServer(app);
 const io = SocketIo(server);
 
 io.on('connection', (socket) => {
+  socket.nickname = 'Anon';
 
   socket.onAny(event => {
     console.log(`Socket Event: ${event}`);
@@ -33,20 +34,23 @@ io.on('connection', (socket) => {
     // callback 함수를 호출함으로써 client에 작업이 끝났다는 사실 및 데이터를 전송 가능
     callback({ status: 'DONE' });
 
-    socket.to(roomName).emit('welcome');
+    socket.to(roomName).emit('welcome', socket.nickname);
   });
 
   socket.on('new_message', (message, roomName, callback) => {
-
-    socket.to(roomName).emit('new_message', message);
+    socket.to(roomName).emit('new_message', `${socket.nickname}: ${message}`);
     callback();
   });
 
   socket.on('disconnecting', () => {
     // socket.to(roomName).emit('welcome');
     socket.rooms.forEach(room => {
-      socket.to(room).emit('bye');
+      socket.to(room).emit('bye', socket.nickname);
     });
+  });
+
+  socket.on('nickname', (nickname) => {
+    socket.nickname = nickname;
   });
 
 })
