@@ -1,6 +1,8 @@
 import http from 'http';
-import SocketIo from 'socket.io';
+import SocketIo, { Server } from 'socket.io';
 import express from 'express';
+
+import { instrument } from '@socket.io/admin-ui';
 
 const app = express();
 
@@ -14,7 +16,20 @@ const handleListen = () => console.log(`Listening on http://localhost:3000 ws://
 // http server
 const server = http.createServer(app);
 // socket server
-const io = SocketIo(server);
+// const io = SocketIo(server);
+
+// socket server with admin ui
+const io = new Server(server, {
+  cors: {
+    origin: ["https://admin.socket.io"],
+    credentials: true
+  }
+});
+
+instrument(io, {
+  auth: false
+});
+
 
 function publicRooms() {
   const { sids, rooms } = io.sockets.adapter;
