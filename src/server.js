@@ -21,6 +21,10 @@ function publicRooms() {
   return [...rooms].filter(([key, value]) => sids.get(key) === undefined).map(([key, value]) => key);
 }
 
+function countRoom(roomName) {
+  return io.sockets.adapter.rooms.get(roomName)?.size;
+}
+
 io.on('connection', (socket) => {
   socket.nickname = 'Anon';
 
@@ -39,7 +43,7 @@ io.on('connection', (socket) => {
     // callback 함수를 호출함으로써 client에 작업이 끝났다는 사실 및 데이터를 전송 가능
     callback({ status: 'DONE' });
 
-    socket.to(roomName).emit('welcome', socket.nickname);
+    socket.to(roomName).emit('welcome', socket.nickname, countRoom(roomName));
 
     io.sockets.emit('room_change', publicRooms());
   });
@@ -52,7 +56,7 @@ io.on('connection', (socket) => {
   socket.on('disconnecting', () => {
     // socket.to(roomName).emit('welcome');
     socket.rooms.forEach(room => {
-      socket.to(room).emit('bye', socket.nickname);
+      socket.to(room).emit('bye', socket.nickname, countRoom(room) - 1);
     });
   });
 
