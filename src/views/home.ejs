@@ -12,7 +12,12 @@
     <h1>Noom</h1>
   </header>
   <main>
-    
+    <div id="myStream">
+      <!-- playsinline: ios에서 자체적으로 전체화면으로 플레이하는 것을 막음 -->
+      <video src="" id="myFace" autoplay playsinline width="400" height="400" muted></video>
+      <button id="mute">Mute</button>
+      <button id="camera">Turn Camera Off</button>
+    </div>
   </main>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/public/js/app.js"></script>
