@@ -16,4 +16,13 @@ const server = http.createServer(app);
 // socket server
 const io = SocketIo(server);
 
+io.on('connection', socket => {
+
+  socket.on('join_room', (roomName, done) => {
+    socket.join('roomName');
+    done();
+    socket.to(roomName).emit('welcome');
+  });
+});
+
 server.listen(3000, handleListen);
