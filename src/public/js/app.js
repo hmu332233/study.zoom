@@ -8,6 +8,8 @@ const cameraBtn = document.getElementById('camera');
 
 const camerasSelect = document.getElementById('cameras');
 
+let myStream;
+let myPeerConnection;
 let muted = false;
 let cameraOff = false;
 let roomName = '';
@@ -105,10 +107,11 @@ camerasSelect.addEventListener('change', handleCameraChange);
 const welcome = document.getElementById('welcome');
 const welcomeForm = welcome.querySelector('form');
 
-function startMedia() {
+async function startMedia() {
   welcome.hidden = true;
   call.hidden = false;
-  getMedia();
+  await getMedia();
+  makeConnection();
 }
 
 function handleWelComeSubmit(event) {
@@ -124,6 +127,31 @@ welcomeForm.addEventListener('submit', handleWelComeSubmit);
 
 // Socket Code
 
-socket.on('welcome', () => {
-  
+socket.on('welcome', async () => {
+  // offer 생성 - step 3
+  // offer 다른 브라우저가 참가할 수 있도록 초대장을 만드는 것
+  // 코덱은 무엇들이 있으며, 어떤 프로토콜을 사용하고, 비트레이트는 얼마이며, 밴드위드스는 얼마이다 와 같은 데이터가 텍스트 형태로 명시되어 있다.
+  const offer = await myPeerConnection.createOffer();
+
+  // step 4
+  myPeerConnection.setLocalDescription(offer);
+
+  // 생성한 offer를 시그널링 서버에 전송 - step5
+  socket.emit('offer', offer, roomName);
+
+  console.log('send the offer', offer);
 });
+
+socket.on('offer', (offer) => {
+  console.log(offer);
+});
+
+// RTC Code
+
+function makeConnection() {
+  // peer connection 생성 - step1
+  myPeerConnection = new RTCPeerConnection();
+
+  // 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어준다 - step2
+  myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
+}
