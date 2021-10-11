@@ -23,8 +23,8 @@
   - 연결 방법 (A와 B가 서로 연결한다고 할 때)
 
     - step0: (A, B) getUserMedia를 통해 stream을 가져옴
-    - step1: (A) peer connection 생성
-    - step2: (A) 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어주기
+    - step1: (A, B) peer connection 생성
+    - step2: (A, B) 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어주기
     - step3: (A) offer 생성
     - step4: (A) offer로 setLocalDescription
     - step5: (A) 생성한 offer를 시그널링 서버에 전송
@@ -34,4 +34,13 @@
     - step9: (B) 생성한 answer를 시그널링 서버에 전송
     - step10: (A) 시그널링 서버로부터 answer를 받아 setRemoteDescription
 
+    - step11: (A, B) offer, answer 교환 이후 icecandidate를 서로 교환
+    - step12: (A, B) 받은 icecandidate를 peerConnection에 추가
+    - step13: (A, B) 서로 연결이 되고 addstream 이벤트가 불려서 상대의 stream을 받아 사용할 수 있게 됨
 
+
+  - 용어(참고: http://hacks.mozilla.or.kr/2013/08/webrtc-and-the-ocean-of-acronyms/)
+    - ICE (Internet Connectivity Establishment)
+      - 웹 브라우저 간에 피어 투 피어 접속을 할 수 있게 해 주는 프레임워크
+    - icecandidate
+      - RTCPeerConnection을 구축 할 때 사용되기도하는 ICE의 후보군(candidate).

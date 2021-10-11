@@ -141,10 +141,11 @@ socket.on('welcome', async () => {
   // 생성한 offer를 시그널링 서버에 전송 - step5
   socket.emit('offer', offer, roomName);
 
-  console.log('send the offer', offer);
+  console.log('send the offer');
 });
 
 socket.on('offer', async (offer) => {
+  console.log('received the offer');
   // 다른 peer가 보낸 offer를 받아서 remote description 셋팅 - step6  
   myPeerConnection.setRemoteDescription(offer);
 
@@ -156,11 +157,22 @@ socket.on('offer', async (offer) => {
 
   // 생성한 answer를 시그널링 서버에 전송 - step9
   socket.emit('answer', answer, roomName);
+
+  console.log('send the answer');
 });
 
 socket.on('answer', async (answer) => {
+  console.log('received the answer');
+
   // 다른 peer가 보낸 answer를 받아서 remote description 셋팅 - step10
   myPeerConnection.setRemoteDescription(answer);
+});
+
+// offer, answer 교환 이후 icecandidate(통신이 가능한 후보군)를 서로 교환 - step11
+socket.on('ice', ice => {
+  console.log('received candidate');
+  // 받은 icecandidate를 peerConnection에 추가 - step12
+  myPeerConnection.addIceCandidate(ice);
 });
 
 // RTC Code
@@ -168,7 +180,28 @@ socket.on('answer', async (answer) => {
 function makeConnection() {
   // peer connection 생성 - step1
   myPeerConnection = new RTCPeerConnection();
+  myPeerConnection.addEventListener('icecandidate', handleIce);
+  myPeerConnection.addEventListener('addstream', handleAddStream);
+
 
   // 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어준다 - step2
   myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream));
+}
+
+
+// offer, answer 교환 이후 icecandidate(통신이 가능한 후보군)를 서로 교환 - step11
+function handleIce(data) {
+  console.log('send candidate');
+
+  socket.emit('ice', data.candidate, roomName);
+}
+
+// 서로 연결이 되고 addstream 이벤트가 불려서 상대의 stream을 받아 사용할 수 있게 됨 - step13
+function handleAddStream(data) {
+  console.log('got a stream from my peer')
+  console.log('Peer\'s stream', data.stream);
+  console.log('My stream', myStream);
+
+  const peersStream = document.getElementById('peersStream');
+  peersStream.srcObject = data.stream;
 }
