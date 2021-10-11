@@ -26,6 +26,12 @@
     - step1: (A) peer connection 생성
     - step2: (A) 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어주기
     - step3: (A) offer 생성
-    - step4: (A) setLocalDescription
+    - step4: (A) offer로 setLocalDescription
     - step5: (A) 생성한 offer를 시그널링 서버에 전송
-    - step6: (B) 시그널링 서버로부터 offer를 받아 ... [진행 중]
+    - step6: (B) 시그널링 서버로부터 offer를 받아 setRemoteDescription
+    - step7: (B) answer 생성
+    - step8: (B) answer로 setLocalDescription
+    - step9: (B) 생성한 answer를 시그널링 서버에 전송
+    - step10: (A) 시그널링 서버로부터 answer를 받아 setRemoteDescription
+
+
