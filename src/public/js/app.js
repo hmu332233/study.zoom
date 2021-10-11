@@ -48,8 +48,9 @@ async function getMedia(deviceId) {
     // exact가 없으면 해당 deviceId로 device가 없어도 다른 device로 화면 표시
   }
   try {
-    // 미디어 스트림 가져오기
-    myStream = await await navigator.mediaDevices.getUserMedia(
+    // 미디어 스트림 가져오기 - 카메라가 없어서 임시로 getDisplayMedia로 변경
+    // myStream = await navigator.mediaDevices.getUserMedia(
+    myStream = await navigator.mediaDevices.getDisplayMedia(
       deviceId ? cameraConstrains : initialConstrains
     );
     myFace.srcObject = myStream;
@@ -107,17 +108,18 @@ camerasSelect.addEventListener('change', handleCameraChange);
 const welcome = document.getElementById('welcome');
 const welcomeForm = welcome.querySelector('form');
 
-async function startMedia() {
+async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
   await getMedia();
   makeConnection();
 }
 
-function handleWelComeSubmit(event) {
+async function handleWelComeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector('input');
-  socket.emit('join_room', input.value, startMedia);
+  await initCall();
+  socket.emit('join_room', input.value);
   roomName = input.value;
   input.value = '';
 }
@@ -133,8 +135,8 @@ socket.on('welcome', async () => {
   // 코덱은 무엇들이 있으며, 어떤 프로토콜을 사용하고, 비트레이트는 얼마이며, 밴드위드스는 얼마이다 와 같은 데이터가 텍스트 형태로 명시되어 있다.
   const offer = await myPeerConnection.createOffer();
 
-  // step 4
-  myPeerConnection.setLocalDescription(offer);
+  // peer에게 local description 셋팅 - step 4
+  await myPeerConnection.setLocalDescription(offer);
 
   // 생성한 offer를 시그널링 서버에 전송 - step5
   socket.emit('offer', offer, roomName);
@@ -142,8 +144,23 @@ socket.on('welcome', async () => {
   console.log('send the offer', offer);
 });
 
-socket.on('offer', (offer) => {
-  console.log(offer);
+socket.on('offer', async (offer) => {
+  // 다른 peer가 보낸 offer를 받아서 remote description 셋팅 - step6  
+  myPeerConnection.setRemoteDescription(offer);
+
+  // answer 생성 - step7
+  const answer = await myPeerConnection.createAnswer();
+
+  // peer에세 answer로 local description 셋팅 - step8
+  myPeerConnection.setLocalDescription(answer);
+
+  // 생성한 answer를 시그널링 서버에 전송 - step9
+  socket.emit('answer', answer, roomName);
+});
+
+socket.on('answer', async (answer) => {
+  // 다른 peer가 보낸 answer를 받아서 remote description 셋팅 - step10
+  myPeerConnection.setRemoteDescription(answer);
 });
 
 // RTC Code
