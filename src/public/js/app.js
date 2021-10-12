@@ -55,7 +55,9 @@ async function getMedia(deviceId) {
     );
     myFace.srcObject = myStream;
 
-    getCameras();
+    if (!deviceId) {
+      getCameras();
+    }
   } catch(err) {
     /* 오류 처리 */
     console.error(err);
