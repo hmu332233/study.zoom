@@ -19,6 +19,7 @@
     - getUserMedia: 사용자 단말기의 미디어 장치를 액세스할 수 있는 방법을 제공. getUserMedia 를 통해 미디어 장치를 액세스 하게 되면 미디어 스트림 객체를 얻을 수 있으며 이를 PeerConnection에 전달하여 미디어 스트림을 전송한다.
     - PeerConnection: 가장 중요한 API 이면서 Peer 간의 화상과 음성 등을 교환하기 위한 거의 모든 작업을 수행하는 API, WebRTC 어플리케이션이 Peer 간의 연결을 생성하고 오디오와 비디오의 통신에 사용되는 API
     - DataChannel: Peer 간에 텍스트나 파일을 주고 받을 수 있는 메시징 API
+    - RTCRtpSender: peer로 보내진 media stream track을 컨트롤할 수 있게 해주는 객체
 
   - 연결 방법 (A와 B가 서로 연결한다고 할 때)
 
@@ -44,3 +45,4 @@
       - 웹 브라우저 간에 피어 투 피어 접속을 할 수 있게 해 주는 프레임워크
     - icecandidate
       - RTCPeerConnection을 구축 할 때 사용되기도하는 ICE의 후보군(candidate).
+    
