@@ -46,4 +46,6 @@
       - 웹 브라우저 간에 피어 투 피어 접속을 할 수 있게 해 주는 프레임워크
     - icecandidate
       - RTCPeerConnection을 구축 할 때 사용되기도하는 ICE의 후보군(candidate).
+    - STUN Server
+      - 어떤 것을 request하면 공인 IP를 알려주는 서버
     
