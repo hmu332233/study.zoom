@@ -21,6 +21,7 @@
     - PeerConnection: 가장 중요한 API 이면서 Peer 간의 화상과 음성 등을 교환하기 위한 거의 모든 작업을 수행하는 API, WebRTC 어플리케이션이 Peer 간의 연결을 생성하고 오디오와 비디오의 통신에 사용되는 API
     - DataChannel: Peer 간에 텍스트나 파일을 주고 받을 수 있는 메시징 API
     - RTCRtpSender: peer로 보내진 media stream track을 컨트롤할 수 있게 해주는 객체
+    - Data Channel: peer to peer 유저가 언제든지 모든 데이터 종류를 주고 받을 수 있는 채널
 
   - 연결 방법 (A와 B가 서로 연결한다고 할 때)
 
@@ -49,3 +50,5 @@
     - STUN Server
       - 어떤 것을 request하면 공인 IP를 알려주는 서버
     
+  - 실제로 다수의 비디오와 오디오를 서로 주고 받아야할 때는 SFU라는 것을 사용한다. 중계 서버 같은?
+  - Data Channel을 통한 통신은 크게 문제 없음
