@@ -8,6 +8,8 @@ const cameraBtn = document.getElementById('camera');
 
 const camerasSelect = document.getElementById('cameras');
 
+
+let myDataChannel;
 let myStream;
 let myPeerConnection;
 let muted = false;
@@ -130,6 +132,13 @@ welcomeForm.addEventListener('submit', handleWelComeSubmit);
 // Socket Code
 
 socket.on('welcome', async () => {
+	// 번외 - peerConnection이 연결되어있을 때, 스트리밍 외에 데이터를 주고 받고 싶으면
+	// offer 생성 전에 data channel 생성해준다.
+	// offer를 만드는 peer가 Data Channel을 만드는 주체
+	myDataChannel = myPeerConnection.createDataChannel('chat');
+	myDataChannel.addEventListener('message', console.log);
+	console.log('made data channel');
+
 	// offer 생성 - step 3
 	// offer 다른 브라우저가 참가할 수 있도록 초대장을 만드는 것
 	// 코덱은 무엇들이 있으며, 어떤 프로토콜을 사용하고, 비트레이트는 얼마이며, 밴드위드스는 얼마이다 와 같은 데이터가 텍스트 형태로 명시되어 있다.
@@ -198,6 +207,17 @@ function makeConnection() {
 
 	// 영상과 오디오를 주고 받기 위해 peerConnection에 video track, audio track들을 넣어준다 - step2
 	myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+
+
+	// 번외 - peerConnection을 통해 datachannel 생성 이벤트가 오면 데이터를 주고 받을 준비 완료
+	myPeerConnection.addEventListener('datachannel', event => {
+		console.log(event)
+		myDataChannel = event.channel;
+		myDataChannel.addEventListener('message', console.log);
+
+		// event를 보내는 방법
+		myDataChannel.send('아무거나 가능!');
+	});
 }
 
 // offer, answer 교환 이후 icecandidate(통신이 가능한 후보군)를 서로 교환 - step11

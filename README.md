@@ -40,6 +40,7 @@
     - step11: (A, B) offer, answer 교환 이후 icecandidate를 서로 교환
     - step12: (A, B) 받은 icecandidate를 peerConnection에 추가
     - step13: (A, B) 서로 연결이 되고 addstream 이벤트가 불려서 상대의 stream을 받아 사용할 수 있게 됨
+    - 번외: Data Channel 연결 및 event 전송
 
 
   - 용어(참고: http://hacks.mozilla.or.kr/2013/08/webrtc-and-the-ocean-of-acronyms/)
